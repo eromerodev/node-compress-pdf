@@ -1,12 +1,30 @@
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
+const { exec } = require('child_process');
+const fs = require('fs').promises;
 
-async function main() {
-  const command = `./lib/shrink.sh Example.pdf Example_compressed.pdf`;
+const compressPDF = (inputPDFPath, outputPDFPath) => {
+  return new Promise((resolve, reject) => {
+    const gsCommand = `gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=${outputPDFPath} ${inputPDFPath}`;
 
-  const { stdout, stderr } = await exec(command);
-  //console.log('stdout:', stdout);
-  if (stderr) console.log('stderr:', stderr); //show errors
-}
+    exec(gsCommand, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing Ghostscript: ${error}`);
+        return reject(error);
+      }
+      console.log(`Ghostscript output: ${stdout}`);
+      resolve();
+    });
+  });
+};
 
-main();
+// Example usage
+(async () => {
+  const inputPDFPath = './storage/input.pdf';  // Replace with your input PDF path
+  const outputPDFPath = './storage/compressed.pdf';  // Replace with your output PDF path
+
+  try {
+    await compressPDF(inputPDFPath, outputPDFPath);
+    console.log(`Compressed PDF saved to ${outputPDFPath}`);
+  } catch (error) {
+    console.error(`Failed to compress PDF: ${error}`);
+  }
+})();
