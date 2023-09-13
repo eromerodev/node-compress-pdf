@@ -22,8 +22,12 @@ In this example:
 - `-sOutputFile=output.pdf` specifies the name of the output file.
 - `input.pdf` is the input PDF file to be compressed.
 
-#### How to Test
+### How to Run
 
 ```sh
 node index.js
 ```
+
+Results:
+
+<img src="compressed.png" />
